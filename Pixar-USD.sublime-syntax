@@ -1,0 +1,87 @@
+%YAML 1.2
+---
+# See http://www.sublimetext.com/docs/3/syntax.html
+file_extensions: [usd, usda]
+
+scope: source.usd
+
+contexts:
+  # The prototype context is prepended to all contexts but those setting
+  # meta_include_prototype: false.
+  prototype:
+    - include: comments
+
+  main:
+    # The main context is the initial starting point of our syntax.
+    # Include other contexts from here (or specify them directly).
+    - include: keywords
+    - include: meta
+    #- include: numbers
+    - include: strings
+
+  keywords:
+    - match: '\b(Color|Dictionary|Matrix1d|Matrix2d|Matrix3d|Matrix4d|Normal|PointFloat|PointIndex|Transform|Vec2|Vec2d|Vec2f|Vec2i|Vec3d|Vec3f|Vec3i|Vec4d|Vec4f|Vec4i|Vector|bool|double|double3|float|float3|int|string|uniform|color3f)\b'
+      scope: constant.numeric.usd
+
+    - match: '\b(active|instanceable|add|references|custom|floatAttribute|hidden|extent|inherits|kind|rel|surface|type|detail|variants|variantSet|variantSets|doc|delete|reorder|color|bezier|points|prop|set|group|transform|token|xformOp)\b'
+      scope: entity.name.function.usd
+
+    - match: '\b(_3DPPoseEnable|_3DPPref1|_3DPSetupMats|__faceindex|__faceindex_SlimSurfOffset|__gprimHandledid|__handleid|axis|color|curvature|displayOpactity|framesPerSecond|grimID|interpolateBoundary|numVerts|occulusion|orientation|slimSurfID|timeSamples|twoSided|u_map1|v_map1|verts|shadingComplexity|pivotPosition|framePrecision|subLayers|startFrame|endFrame)\b'
+      scope: entity.name.function.usd
+
+    - match: '\b(Xform|Subdiv|Curve|Cube|Sphere|Scope|Shader|Plane|Mesh|__AnyType__)\b'
+      scope: entity.name.class.usd
+
+    - match: '\b(def|class|over)\b'
+      scope: keyword.control.conditional.usd
+
+    - match: '\b(NULL|false|off|on|true)\b'
+      scope: entity.name.class.usd
+
+  # (davidlatwe) Since numbers in .usd file might not the main focus (numbers everywhere...),
+  #              so I disable the highlight.
+  #numbers:
+  #  - match: '\b(-)?[0-9.]+\b'
+  #    scope: constant.numeric.usd
+  meta:
+    - match: '({|})'
+      scope: meta.tag.usd
+
+    - match: '(\[|\])'
+      scope: meta.tag.usd
+
+    - match: '(\(|\))'
+      scope: meta.tag.usd
+
+    - match: '(=|:|,)'
+      scope: meta.tag.usd
+
+    - match: '@.+@'
+      scope: entity.name.tag.usd
+
+    - match: '</.+>'
+      scope: meta.tag.usd
+
+  strings:
+    # Strings begin and end with quotes, and use backslashes as an escape
+    # character.
+    - match: '"'
+      scope: punctuation.definition.string.begin.usd
+      push: inside_string
+
+  inside_string:
+    - meta_include_prototype: false
+    - meta_scope: string.quoted.double.usd
+    - match: '\.'
+      scope: constant.character.escape.usd
+    - match: '"'
+      scope: punctuation.definition.string.end.usd
+      pop: true
+
+  comments:
+    - match: '#'
+      scope: punctuation.definition.comment.usd
+      push:
+        - meta_scope: comment.line.double-slash.usd
+        - match: $\n?
+          pop: true
