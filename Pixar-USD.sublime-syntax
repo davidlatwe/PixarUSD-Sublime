@@ -72,7 +72,7 @@ contexts:
   inside_string:
     - meta_include_prototype: false
     - meta_scope: string.quoted.double.usd
-    - match: '\.'
+    - match: '\\.'
       scope: constant.character.escape.usd
     - match: '"'
       scope: punctuation.definition.string.end.usd
